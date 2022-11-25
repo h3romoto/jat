@@ -18,9 +18,11 @@ const register = async (req, res, next) => {
   }
 
   const user = await User.create({ name, email, password });
-  user.createJWT();
 
-  res.status(StatusCodes.OK).json({ user });
+  // create jwt token
+  const token = user.createJWT();
+
+  res.status(StatusCodes.OK).json({ user, token });
 };
 
 const login = async (req, res) => {
