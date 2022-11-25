@@ -7,6 +7,7 @@ const errorHandlerMiddleware = (err, req, res, next) => {
     msg: "Something went wrong",
   };
 
+  // check for invalid user input
   if (err.name === "ValidationError") {
     defaultError.statusCode = StatusCodes.BAD_REQUEST;
     // defaultError.msg = err.message;
@@ -14,7 +15,13 @@ const errorHandlerMiddleware = (err, req, res, next) => {
       .map((item) => item.message)
       .join(",");
   }
+
+  // check if user already exists
+  if (err.code && err.code === 11000) {
+    defaultError.statusCode = StatusCodes.BAD_REQUEST;
+    defaultError.msg = `${Object.keys(err.keyValue)} field has to be unique`;
+  }
   res.status(defaultError.statusCode).json({ msg: defaultError.msg });
 };
- 0
+
 export default errorHandlerMiddleware;
