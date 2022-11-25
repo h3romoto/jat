@@ -26,6 +26,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please provide password"],
     minlength: 6,
+    // password will not be returned in Document from db query
     select: false,
   },
   lastName: {
