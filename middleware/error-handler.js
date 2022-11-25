@@ -1,10 +1,12 @@
 import { StatusCodes } from "http-status-codes";
 
 const errorHandlerMiddleware = (err, req, res, next) => {
-  console.log(err);
+  console.log(err.message);
+
   const defaultError = {
     statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-    msg: "Something went wrong",
+    // use err message passed down, else use generic error
+    msg: err.message || "Something went wrong. Try again later",
   };
 
   // check for invalid user input
@@ -21,6 +23,8 @@ const errorHandlerMiddleware = (err, req, res, next) => {
     defaultError.statusCode = StatusCodes.BAD_REQUEST;
     defaultError.msg = `${Object.keys(err.keyValue)} field has to be unique`;
   }
+
+
   res.status(defaultError.statusCode).json({ msg: defaultError.msg });
 };
 
