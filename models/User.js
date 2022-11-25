@@ -39,4 +39,13 @@ const UserSchema = new mongoose.Schema({
   },
 })
 
+// middleware
+UserSchema.pre("save", async function() {
+  // .pre hook is NOT triggered by some methods, e.g findOneAndUpdate
+  const salt = await bcrypt.genSalt(10);
+  // "this" points to User instance from request
+  this.password = await bcrypt.hash(this.password, salt); 
+  
+})
+
 export default mongoose.model("User", UserSchema);
