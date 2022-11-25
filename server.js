@@ -17,6 +17,7 @@ app.get("/", (req, res) => {
   res.send("This is the server talking");
 });
 
+// routes
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/jobs", jobsRouter);
 
