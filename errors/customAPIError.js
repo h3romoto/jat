@@ -1,4 +1,4 @@
-// custom error class, extended to include status code(s)
+// custom error class, extended by other classes to include status code(s)
 class customAPIError extends Error {
   constructor(message) {
     super(message);
