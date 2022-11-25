@@ -1,12 +1,25 @@
 import User from "../models/User.js";
 import { StatusCodes } from "http-status-codes";
 
-// custom error class includes status code(s)
+// custom error class, extended to include status code(s)
 class customAPIError extends Error {
   constructor(message) {
     super(message);
-    this.statusCode = StatusCodes.BAD_REQUEST;
   }
+}
+
+class NotFoundError extends customAPIError {
+  constructor(message) {
+    super(message);
+    this.statusCode = StatusCodes.NOT_FOUND;
+  }  
+}
+
+class BadRequestError extends customAPIError {
+  constructor(message) {
+    super(message);
+    this.statusCode = StatusCodes.BAD_REQUEST;
+  }  
 }
 
 const register = async (req, res, next) => {
@@ -15,7 +28,7 @@ const register = async (req, res, next) => {
   // check for missing field(s)
   if (!name || !email || !password) {
     // this error is passed on to the middleware
-    throw new customAPIError("Please provide all values");
+    throw new BadRequestError("Please provide all values");
   }
 
   const user = await User.create({ name, email, password });
