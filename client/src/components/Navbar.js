@@ -9,7 +9,7 @@ const Navbar = () => {
   const [showLogout, setShowLogout] = useState(false);
 
   // global
-  const { toggleSidebar } = useAppContext();
+  const { toggleSidebar, user, logoutUser } = useAppContext();
 
   return (
     <Wrapper>
@@ -28,14 +28,14 @@ const Navbar = () => {
             onClick={() => setShowLogout(!showLogout)}
           >
             <FaUserCircle />
-            Tanaka
+            {user?.name}
             <FaCaretDown />
           </button>
           <div className={showLogout ? "dropdown show-dropdown" : "dropdown"}>
             <button
               type="button"
               className="dropdown-btn"
-              onClick={() => console.log("Logout user")}
+              onClick={logoutUser}
             >
               logout
             </button>

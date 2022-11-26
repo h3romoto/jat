@@ -10,6 +10,7 @@ import {
   LOGIN_USER_BEGIN,
   LOGIN_USER_SUCCESS,
   LOGIN_USER_ERROR,
+  LOGOUT_USER,
   TOGGLE_SIDEBAR
 } from "./actions";
 import axios from "axios";
@@ -119,8 +120,13 @@ const AppProvider = ({ children }) => {
     dispatch({ type:TOGGLE_SIDEBAR})
   }
 
+  const logoutUser = () => {
+    dispatch({ type: LOGOUT_USER })
+    removeUserFromLocalStorage()
+  }
+
   return (
-    <AppContext.Provider value={{ ...state, displayAlert, registerUser, loginUser, toggleSidebar }}>
+    <AppContext.Provider value={{ ...state, displayAlert, registerUser, loginUser, logoutUser, toggleSidebar }}>
       {/* render the application and pass down the value object 
         children refers to App component with all the routes
       */}
