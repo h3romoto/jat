@@ -1,7 +1,7 @@
 import { FormRow, Alert } from "../../components";
 import { useAppContext } from "../../context/appContext";
 import Wrapper from "../../assets/wrappers/DashboardFormPage";
-import FormRowSelect from "../../components/FormRowSelect"
+import FormRowSelect from "../../components/FormRowSelect";
 
 const AddJob = () => {
   const {
@@ -16,6 +16,7 @@ const AddJob = () => {
     status,
     statusOptions,
     handleChange,
+    clearValues,
   } = useAppContext();
 
   const handleSubmit = (e) => {
@@ -31,7 +32,7 @@ const AddJob = () => {
   const handleJobInput = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-    handleChange({name, value})
+    handleChange({ name, value });
   };
 
   return (
@@ -90,6 +91,17 @@ const AddJob = () => {
               onClick={handleSubmit}
             >
               submit
+            </button>
+            {/* submit button */}
+
+            <button
+              className="btn btn-block clear-btn"
+              onClick={(e) => {
+                e.preventDefault();
+                clearValues();
+              }}
+            >
+              clear
             </button>
           </div>
         </div>
