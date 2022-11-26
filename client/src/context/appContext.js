@@ -11,7 +11,7 @@ import {
   LOGIN_USER_SUCCESS,
   LOGIN_USER_ERROR,
   LOGOUT_USER,
-  TOGGLE_SIDEBAR
+  TOGGLE_SIDEBAR,
 } from "./actions";
 import axios from "axios";
 
@@ -36,6 +36,35 @@ const AppContext = React.createContext();
 
 const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  // axios
+  const authFetch = axios.create({
+    baseURL: "/api/v1",
+  });
+
+  // request interceptor
+  authFetch.interceptors.request.use(
+    (config) => {
+      config.headers["Authorization"] = `Bearer ${state.token}`;
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
+  // response interceptor
+  authFetch.interceptors.response.use(
+    (response) => {
+      return response;
+    },
+    (error) => {
+      console.log(error.response);
+      if (error.response.status === 401) {
+        console.log("AUTH ERROR");
+      }
+      return Promise.reject(error);
+    }
+  );
 
   const displayAlert = () => {
     dispatch({
@@ -79,7 +108,6 @@ const AppProvider = ({ children }) => {
       });
 
       addUserToLocalStorage({ user, token, location });
-
     } catch (error) {
       // console.log(error.response);
       dispatch({
@@ -95,7 +123,7 @@ const AppProvider = ({ children }) => {
     dispatch({ type: LOGIN_USER_BEGIN });
 
     try {
-      const {data} = await axios.post("/api/v1/auth/login", currentUser);
+      const { data } = await axios.post("/api/v1/auth/login", currentUser);
       // console.log(response);
       // where is "data" coming from?
       const { user, token, location } = data;
@@ -105,7 +133,6 @@ const AppProvider = ({ children }) => {
       });
 
       addUserToLocalStorage({ user, token, location });
-
     } catch (error) {
       dispatch({
         type: LOGIN_USER_ERROR,
@@ -117,20 +144,34 @@ const AppProvider = ({ children }) => {
   };
 
   const toggleSidebar = () => {
-    dispatch({ type:TOGGLE_SIDEBAR})
-  }
+    dispatch({ type: TOGGLE_SIDEBAR });
+  };
 
   const logoutUser = () => {
-    dispatch({ type: LOGOUT_USER })
-    removeUserFromLocalStorage()
-  }
+    dispatch({ type: LOGOUT_USER });
+    removeUserFromLocalStorage();
+  };
 
-  const updateUser = async => {
-    console.log("Update user");
-  }
+  const updateUser = async (currentUser) => {
+    try {
+      const { data } = await authFetch.patch("/auth/updateUser", currentUser);
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
 
   return (
-    <AppContext.Provider value={{ ...state, displayAlert, registerUser, loginUser, logoutUser, toggleSidebar }}>
+    <AppContext.Provider
+      value={{
+        ...state,
+        displayAlert,
+        registerUser,
+        loginUser,
+        logoutUser,
+        toggleSidebar,
+        updateUser,
+      }}
+    >
       {/* render the application and pass down the value object 
         children refers to App component with all the routes
       */}
