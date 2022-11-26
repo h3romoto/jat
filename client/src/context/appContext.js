@@ -63,7 +63,7 @@ const AppProvider = ({ children }) => {
     (error) => {
       console.log(error.response);
       if (error.response.status === 401) {
-        console.log("AUTH ERROR");
+        logoutUser()
       }
       return Promise.reject(error);
     }
@@ -160,19 +160,22 @@ const AppProvider = ({ children }) => {
     try {
       const { data } = await authFetch.patch('/auth/updateUser', currentUser)
   
-      const { user, location, token } = data
+      // no token
+      const { user, location } = data
   
       dispatch({
         type: UPDATE_USER_SUCCESS,
         payload: { user, location, token },
       })
   
-      addUserToLocalStorage({ user, location, token })
+      addUserToLocalStorage({ user, location, token: initialState.token })
     } catch (error) {
-      dispatch({
-        type: UPDATE_USER_ERROR,
-        payload: { msg: error.response.data.msg },
-      })
+      if (error.response.status !== 401) {
+        dispatch({
+          type: UPDATE_USER_ERROR,
+          payload: { msg: error.response.data.msg },
+        })
+      }
     }
     clearAlert()
   }
