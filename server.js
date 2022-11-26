@@ -13,8 +13,8 @@ import authRouter from "./routes/authRoutes.js";
 import jobsRouter from "./routes/jobRoutes.js";
 app.use(express.json())
 
-app.get("/", (req, res) => {
-  res.send("This is the server talking");
+app.get("/api/v1", (req, res) => {
+  res.json({MSG: "This is the server talking"});
 });
 
 // routes
