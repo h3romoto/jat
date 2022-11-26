@@ -15,6 +15,7 @@ import {
   UPDATE_USER_BEGIN,
   UPDATE_USER_SUCCESS,
   UPDATE_USER_ERROR,
+  HANDLE_CHANGE,
 } from "./actions";
 import axios from "axios";
 
@@ -30,17 +31,17 @@ const initialState = {
   alertType: "",
   user: user ? JSON.parse(user) : null,
   token: token,
-  showSidebar: false,  
+  showSidebar: false,
   userLocation: userLocation || "",
   jobLocation: userLocation || "",
   isEditing: false,
-  editJobId: '',
-  position: '',
-  company: '',
-  jobTypeOptions: ['full-time', 'part-time', 'remote', 'internship'],
-  jobType: 'full-time',
-  statusOptions: ['pending', 'interview', 'declined'],
-  status: 'pending',
+  editJobId: "",
+  position: "",
+  company: "",
+  jobTypeOptions: ["full-time", "part-time", "remote", "internship"],
+  jobType: "full-time",
+  statusOptions: ["pending", "interview", "accepted", "declined"],
+  status: "pending",
 };
 
 const AppContext = React.createContext();
@@ -71,7 +72,7 @@ const AppProvider = ({ children }) => {
     (error) => {
       console.log(error.response);
       if (error.response.status === 401) {
-        logoutUser()
+        logoutUser();
       }
       return Promise.reject(error);
     }
@@ -164,29 +165,37 @@ const AppProvider = ({ children }) => {
   };
 
   const updateUser = async (currentUser) => {
-    dispatch({ type: UPDATE_USER_BEGIN })
+    dispatch({ type: UPDATE_USER_BEGIN });
     try {
-      const { data } = await authFetch.patch('/auth/updateUser', currentUser)
-  
+      const { data } = await authFetch.patch("/auth/updateUser", currentUser);
+
       // no token
-      const { user, location } = data
-  
+      const { user, location } = data;
+
       dispatch({
         type: UPDATE_USER_SUCCESS,
         payload: { user, location, token },
-      })
-  
-      addUserToLocalStorage({ user, location, token: initialState.token })
+      });
+
+      addUserToLocalStorage({ user, location, token: initialState.token });
     } catch (error) {
       if (error.response.status !== 401) {
         dispatch({
           type: UPDATE_USER_ERROR,
           payload: { msg: error.response.data.msg },
-        })
+        });
       }
     }
-    clearAlert()
+    clearAlert();
+  };
+
+  const handleChange = ({ name, value }) => {
+    dispatch({
+      type: HANDLE_CHANGE,
+      payload: { name, value },
+    })
   }
+  
 
   return (
     <AppContext.Provider
@@ -198,6 +207,7 @@ const AppProvider = ({ children }) => {
         logoutUser,
         toggleSidebar,
         updateUser,
+        handleChange,
       }}
     >
       {/* render the application and pass down the value object 
