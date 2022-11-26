@@ -24,7 +24,7 @@ const register = async (req, res, next) => {
   // create jwt token
   const token = user.createJWT();
 
-  // exclude user password from from returned User Document
+  // EXCLUDE PASSWORD from from returned User Document
   res
     .status(StatusCodes.OK)
     .json({

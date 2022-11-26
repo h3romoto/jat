@@ -35,6 +35,7 @@ const Register = () => {
     }
 
     const currentUser = { name, email, password};
+
     if (isMember) {
       console.log("Already a member");
     } else {
