@@ -66,6 +66,7 @@ const login = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
+  console.log(`Passed down from auth.js middleware: req.user: ${req.user}`)
   res.send("update user");
 };
 
