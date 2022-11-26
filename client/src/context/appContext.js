@@ -125,6 +125,10 @@ const AppProvider = ({ children }) => {
     removeUserFromLocalStorage()
   }
 
+  const updateUser = async => {
+    console.log("Update user");
+  }
+
   return (
     <AppContext.Provider value={{ ...state, displayAlert, registerUser, loginUser, logoutUser, toggleSidebar }}>
       {/* render the application and pass down the value object 
