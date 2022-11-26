@@ -38,8 +38,8 @@ html {
   /* rest of the colors */
   --black: #222;
   --white: #fff;
-  --red-light: #f8d7da;
-  --red-dark: #842029;
+  --red-light: #d75e68;
+  --red-dark: #8f1a24;
   --green-light: #d1e7dd;
   --green-dark: #0f5132;
 
@@ -295,27 +295,4 @@ ul {
 }
 .full-page {
   min-height: 100vh;
-}
-
-.coffee-info {
-  text-align: center;
-  text-transform: capitalize;
-  margin-bottom: 1rem;
-  letter-spacing: var(--letterSpacing);
-}
-.coffee-info span {
-  display: block;
-}
-.coffee-info a {
-  color: var(--primary-500);
-}
-
-@media screen and (min-width: 992px) {
-  .coffee-info {
-    text-align: left;
-  }
-  .coffee-info span {
-    display: inline-block;
-    margin-right: 0.5rem;
-  }
 }
