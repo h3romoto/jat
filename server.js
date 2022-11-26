@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import "express-async-errors";
+import morgan from "morgan";
 const app = express();
 dotenv.config();
 const port = 5000;
@@ -11,10 +12,10 @@ import connectDB from "./db/connectdb.js";
 // routers and routes
 import authRouter from "./routes/authRoutes.js";
 import jobsRouter from "./routes/jobRoutes.js";
-app.use(express.json())
+app.use(express.json());
 
 app.get("/api/v1", (req, res) => {
-  res.json({MSG: "This is the server talking"});
+  res.json({ MSG: "This is the server talking" });
 });
 
 // routes
@@ -24,6 +25,10 @@ app.use("/api/v1/jobs", jobsRouter);
 // middleware
 import errorHandlerMiddleware from "./middleware/error-handler.js";
 import notFoundMiddleware from "./middleware/not-found.js";
+
+if (process.env.NODE_ENV !== 'production') {
+  app.use(morgan('dev'));
+}
 // check for incorrect routes
 app.use(notFoundMiddleware);
 // check errors in existing routes (bottom of all middleware)
@@ -40,4 +45,4 @@ const start = async () => {
   }
 };
 
-start()
+start();
