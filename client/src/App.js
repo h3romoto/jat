@@ -6,13 +6,17 @@ import {
   ShareLayout,
   Stats,
 } from "./pages/Dashboard";
-import { Landing, Register, Error } from "./pages";
+import { Landing, Register, Error, ProtectedRoutes } from "./pages";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<ShareLayout />}> 
+        <Route path="/" element={
+          <ProtectedRoutes>
+            <ShareLayout />
+          </ProtectedRoutes>
+        }> 
         {/* nested dashboard routes, relative to "/" */}
           <Route index element={<Stats />} />
           <Route path="all-jobs" element={<AllJobs />} />
