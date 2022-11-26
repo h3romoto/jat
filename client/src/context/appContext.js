@@ -12,6 +12,9 @@ import {
   LOGIN_USER_ERROR,
   LOGOUT_USER,
   TOGGLE_SIDEBAR,
+  UPDATE_USER_BEGIN,
+  UPDATE_USER_SUCCESS,
+  UPDATE_USER_ERROR,
 } from "./actions";
 import axios from "axios";
 
@@ -153,12 +156,26 @@ const AppProvider = ({ children }) => {
   };
 
   const updateUser = async (currentUser) => {
+    dispatch({ type: UPDATE_USER_BEGIN })
     try {
-      const { data } = await authFetch.patch("/auth/updateUser", currentUser);
+      const { data } = await authFetch.patch('/auth/updateUser', currentUser)
+  
+      const { user, location, token } = data
+  
+      dispatch({
+        type: UPDATE_USER_SUCCESS,
+        payload: { user, location, token },
+      })
+  
+      addUserToLocalStorage({ user, location, token })
     } catch (error) {
-      console.log(error.response);
+      dispatch({
+        type: UPDATE_USER_ERROR,
+        payload: { msg: error.response.data.msg },
+      })
     }
-  };
+    clearAlert()
+  }
 
   return (
     <AppContext.Provider
