@@ -62,12 +62,34 @@ const login = async (req, res) => {
 
   const token = user.createJWT();
   user.password = undefined;
-  res.status(StatusCodes.OK).json({ user, token: token, location: user.location });
+  res
+    .status(StatusCodes.OK)
+    .json({ user, token: token, location: user.location });
 };
 
 const updateUser = async (req, res) => {
-  console.log(`Passed down from auth.js middleware: req.user: ${req.user}`)
-  res.send("update user");
+  const { email, name, lastName, location } = req.body;
+  if (!email || !name || !lastName || !location) {
+    throw new BadRequestError("Please provide all values");
+  }
+
+  // per User model, findOne won't return password field
+  const user = await User.findOne({ _id: req.user.userId });
+
+  user.email = email;
+  user.name = name;
+  user.lastName = lastName;
+  user.location = location;
+
+  await user.save();
+
+  // if other properties included, must re-generate token
+  const token = user.createJWT();
+  res.status(StatusCodes.OK).json({
+    user,
+    token,
+    location: user.location,
+  });
 };
 
 export { register, login, updateUser };

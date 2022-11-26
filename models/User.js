@@ -45,10 +45,16 @@ const UserSchema = new mongoose.Schema({
 
 // middleware
 UserSchema.pre("save", async function () {
+  console.log(this.modifiedPaths())
+  // only hash password if req actually changes it
+  if (!this.isModified('password')) {
+    return
+  }
   // .pre hook is NOT triggered by some methods, e.g findOneAndUpdate
   const salt = await bcrypt.genSalt(10);
   // "this" points to User model instance (document) from request
   this.password = await bcrypt.hash(this.password, salt);
+  
 });
 
 // custom instance methods
