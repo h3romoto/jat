@@ -238,12 +238,12 @@ const AppProvider = ({ children }) => {
   };
 
   const getJobs = async () => {
-    let url = `/jobs`
-  
-    dispatch({ type: GET_JOBS_BEGIN })
+    let url = `/jobs`;
+
+    dispatch({ type: GET_JOBS_BEGIN });
     try {
-      const { data } = await authFetch(url)
-      const { jobs, totalJobs, numOfPages } = data
+      const { data } = await authFetch(url);
+      const { jobs, totalJobs, numOfPages } = data;
       dispatch({
         type: GET_JOBS_SUCCESS,
         payload: {
@@ -251,13 +251,20 @@ const AppProvider = ({ children }) => {
           totalJobs,
           numOfPages,
         },
-      })
+      });
     } catch (error) {
-      console.log(error.response)
+      console.log(error.response);
       // logoutUser()
     }
-    clearAlert()
-  }
+    clearAlert();
+  };
+
+  const setEditJob = (id) => {
+    console.log(`set edit job : ${id}`);
+  };
+  const deleteJob = (id) => {
+    console.log(`delete : ${id}`);
+  };
 
   return (
     <AppContext.Provider
@@ -273,6 +280,8 @@ const AppProvider = ({ children }) => {
         clearValues,
         createJob,
         getJobs,
+        setEditJob,
+        deleteJob,
       }}
     >
       {/* render the application and pass down the value object 
