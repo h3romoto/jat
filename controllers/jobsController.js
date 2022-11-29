@@ -73,7 +73,8 @@ const showStats = async (req, res) => {
   // aggregation pipeline: 
   // https://www.mongodb.com/docs/manual/core/aggregation-pipeline/
   let stats = await Job.aggregate([
-    { $match: { createdBy: mongoose.Types.ObjectId(req.user.userId) } }
+    { $match: { createdBy: mongoose.Types.ObjectId(req.user.userId) } },
+    { $group: { _id: '$status', count: { $sum: 1 } } }
   ])
   res.status(StatusCodes.OK).json({ stats })
 };
