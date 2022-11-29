@@ -10,7 +10,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please provide name"],
     minlength: 3,
-    maxlength: 20,
+    maxlength: 50,
     trim: true,
   },
   email: {
@@ -32,13 +32,13 @@ const UserSchema = new mongoose.Schema({
   lastName: {
     type: String,
     trim: true,
-    maxlength: 20,
+    maxlength: 50,
     default: "lastName",
   },
   location: {
     type: String,
     trim: true,
-    maxlength: 20,
+    maxlength: 50,
     default: "my city",
   },
 });
