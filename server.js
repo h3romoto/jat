@@ -4,7 +4,7 @@ import "express-async-errors";
 import morgan from "morgan";
 const app = express();
 dotenv.config();
-const port = 5000;
+const port = process.env.PORT;
 
 // db connection
 import connectDB from "./db/connectdb.js";
@@ -14,9 +14,7 @@ import authRouter from "./routes/authRoutes.js";
 import jobsRouter from "./routes/jobRoutes.js";
 app.use(express.json());
 
-app.get("/api/v1", (req, res) => {
-  res.json({ MSG: "This is the server talking" });
-});
+app.get("/api/v1", (req, res) => { res.json({ MSG: "This is the server talking" }); });
 
 // routes
 app.use("/api/v1/auth", authRouter);
