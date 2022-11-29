@@ -6,6 +6,11 @@ import SmallSidebar from "./SmallSidebar";
 import BigSidebar from "./BigSidebar";
 import SearchContainer from "./SearchContainer";
 import JobsContainer from "./JobsContainer";
+import StatsContainer from "./StatsContainer";
+import StatsItem from "./StatsItem";
+import ChartsContainer from "./ChartsContainer.js";
+import Loading from "./Loading";
+
 
 export {
   Logo,
@@ -16,4 +21,8 @@ export {
   BigSidebar,
   SearchContainer,
   JobsContainer,
+  StatsContainer,
+  StatsItem,
+  ChartsContainer,
+  Loading,
 };
