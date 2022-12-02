@@ -11,7 +11,7 @@ import StatsItem from "./StatsItem";
 import ChartsContainer from "./ChartsContainer.js";
 import Loading from "./Loading";
 import AreaChart from "./AreaChart";
-import Barchart from "./Barchart";
+import Barchart from "./BarChart";
 
 export {
   Logo,
