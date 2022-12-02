@@ -10,7 +10,8 @@ import StatsContainer from "./StatsContainer";
 import StatsItem from "./StatsItem";
 import ChartsContainer from "./ChartsContainer.js";
 import Loading from "./Loading";
-
+import AreaChart from "./AreaChart";
+import Barchart from "./Barchart";
 
 export {
   Logo,
@@ -25,4 +26,6 @@ export {
   StatsItem,
   ChartsContainer,
   Loading,
+  AreaChart,
+  Barchart,
 };
