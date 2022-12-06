@@ -29,6 +29,7 @@ import {
   EDIT_JOB_ERROR,
   SHOW_STATS_BEGIN,
   SHOW_STATS_SUCCESS,
+  CLEAR_FILTERS,
 } from "./actions";
 import axios from "axios";
 
@@ -61,11 +62,11 @@ const initialState = {
   page: 1,
   stats: {},
   monthlyApplications: [],
-  search: '',
-  searchStatus: 'all',
-  searchType: 'all', 
-  sort: 'latest', 
-  sortOptions: ['latest', 'oldest', 'a-z', 'z-a']
+  search: "",
+  searchStatus: "all",
+  searchType: "all",
+  sort: "latest",
+  sortOptions: ["latest", "oldest", "a-z", "z-a"],
 };
 
 const AppContext = React.createContext();
@@ -274,8 +275,8 @@ const AppProvider = ({ children }) => {
   };
 
   const setEditJob = (id) => {
-    dispatch({ type: SET_EDIT_JOB, payload: { id } })
-  }
+    dispatch({ type: SET_EDIT_JOB, payload: { id } });
+  };
 
   const editJob = async () => {
     dispatch({ type: EDIT_JOB_BEGIN });
@@ -304,37 +305,39 @@ const AppProvider = ({ children }) => {
   };
 
   const deleteJob = async (jobId) => {
-    dispatch({ type: DELETE_JOB_BEGIN })
+    dispatch({ type: DELETE_JOB_BEGIN });
     try {
-      await authFetch.delete(`/jobs/${jobId}`)
-      getJobs()
+      await authFetch.delete(`/jobs/${jobId}`);
+      getJobs();
     } catch (error) {
-      logoutUser()
+      logoutUser();
     }
-  }
+  };
 
   const showStats = async () => {
-    dispatch({ type: SHOW_STATS_BEGIN })
+    dispatch({ type: SHOW_STATS_BEGIN });
     try {
-      const { data } = await authFetch('/jobs/stats')
+      const { data } = await authFetch("/jobs/stats");
       dispatch({
         type: SHOW_STATS_SUCCESS,
         payload: {
           stats: data.defaultStats,
           monthlyApplications: data.monthlyApplications,
         },
-      })
+      });
     } catch (error) {
-      console.log(error.response)
-      logoutUser()
+      console.log(error.response);
+      logoutUser();
     }
 
-    clearAlert()
-  }
+    clearAlert();
+  };
 
   const clearFilters = () => {
-    console.log("Clear filters")
-  }
+    dispatch({
+      type: CLEAR_FILTERS,
+    });
+  };
 
   return (
     <AppContext.Provider
