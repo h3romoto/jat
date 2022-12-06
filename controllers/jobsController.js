@@ -34,11 +34,25 @@ const getAllJobs = async (req, res) => {
   }
 
   if (search) {
-    queryObject.position = {$regex: search, $options: 'i'}
+    queryObject.position = {$regex:search, $options: 'i'}
   }
 
   // NO AWAIT, return query 
   let result = Job.find(queryObject);
+
+  // Mongoose sort 
+  if (sort === 'latest') {
+    result = result.sort('-createdAt')
+  }
+  if (sort === 'oldest') {
+    result = result.sort('createdAt')
+  }
+  if (sort === 'a-z') {
+    result = result.sort('position')
+  }
+  if (sort === 'z-a') {
+    result = result.sort('-position')
+  }
 
   // chain sort conditions
   const jobs = await result;
