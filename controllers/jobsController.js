@@ -19,7 +19,25 @@ const createJob = async (req, res) => {
 };
 
 const getAllJobs = async (req, res) => {
-  const jobs = await Job.find({ createdBy: req.user.userId });
+  const { search, status, jobType, sort } = req.query;
+
+  const queryObject = {
+    createdBy: req.user.userId,
+  };
+
+  if (status !== "all") {
+    queryObject.status = status;
+  }
+
+  if (jobType !== "all") {
+    queryObject.jobType = jobType;
+  }
+
+  // NO AWAIT, return query 
+  let result = Job.find(queryObject);
+
+  // chain sort conditions
+  const jobs = await result;
 
   res
     .status(StatusCodes.OK)
@@ -32,7 +50,7 @@ const updateJob = async (req, res) => {
   const { company, position } = req.body;
 
   if (!company || !position) {
-    throw new BadRequestError('Please Provide All Values');
+    throw new BadRequestError("Please Provide All Values");
   }
 
   const job = await Job.findOne({ _id: jobId });
@@ -41,8 +59,8 @@ const updateJob = async (req, res) => {
     throw new NotFoundError(`No job with id ${jobId}`);
   }
 
-  console.log(typeof req.user.userId)
-  console.log(typeof job.createdBy)
+  console.log(typeof req.user.userId);
+  console.log(typeof job.createdBy);
 
   // checkPermissions(req.user, job.createdBy);
 
@@ -67,22 +85,22 @@ const deleteJob = async (req, res) => {
   checkPermissions(req.user, job.createdBy);
 
   await job.remove();
-  res.status(StatusCodes.OK).json({ msg: 'Success! Job removed' });
+  res.status(StatusCodes.OK).json({ msg: "Success! Job removed" });
 };
 
 const showStats = async (req, res) => {
-  // aggregation pipeline: 
+  // aggregation pipeline:
   // https://www.mongodb.com/docs/manual/core/aggregation-pipeline/
   let stats = await Job.aggregate([
     { $match: { createdBy: mongoose.Types.ObjectId(req.user.userId) } },
-    { $group: { _id: '$status', count: { $sum: 1 } } }
-  ])
+    { $group: { _id: "$status", count: { $sum: 1 } } },
+  ]);
 
   stats = stats.reduce((acc, curr) => {
-    const { _id: title, count } = curr
-    acc[title] = count
-    return acc
-  }, {})
+    const { _id: title, count } = curr;
+    acc[title] = count;
+    return acc;
+  }, {});
 
   const defaultStats = {
     pending: stats.pending || 0,
@@ -96,27 +114,34 @@ const showStats = async (req, res) => {
       $group: {
         _id: {
           year: {
-            $year: '$createdAt',
+            $year: "$createdAt",
           },
           month: {
-            $month: '$createdAt',
+            $month: "$createdAt",
           },
         },
         count: { $sum: 1 },
       },
     },
-    { $sort: { '_id.year': -1, '_id.month': -1 } },
+    { $sort: { "_id.year": -1, "_id.month": -1 } },
     { $limit: 6 },
   ]);
 
-  monthlyApplications = monthlyApplications.map((item) => {
-    const { _id: { year, month }, count } = item
-    const date = moment().month(month - 1).year(year).format("MMM Y")
-    return {date, count}
-  }).reverse()
+  monthlyApplications = monthlyApplications
+    .map((item) => {
+      const {
+        _id: { year, month },
+        count,
+      } = item;
+      const date = moment()
+        .month(month - 1)
+        .year(year)
+        .format("MMM Y");
+      return { date, count };
+    })
+    .reverse();
 
   res.status(StatusCodes.OK).json({ defaultStats, monthlyApplications });
-
 };
 
 export { createJob, deleteJob, updateJob, getAllJobs, showStats };
