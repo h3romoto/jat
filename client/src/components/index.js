@@ -11,7 +11,8 @@ import StatsItem from "./StatsItem";
 import ChartsContainer from "./ChartsContainer.js";
 import Loading from "./Loading";
 import AreaChart from "./AreaChart";
-import Barchart from "./BarChart";
+import BarChart from "./BarChart.js";
+import FormRowSelect from "./FormRowSelect.js"
 
 export {
   Logo,
@@ -27,5 +28,6 @@ export {
   ChartsContainer,
   Loading,
   AreaChart,
-  Barchart,
+  BarChart,
+  FormRowSelect,
 };
