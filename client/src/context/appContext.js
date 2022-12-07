@@ -30,6 +30,7 @@ import {
   SHOW_STATS_BEGIN,
   SHOW_STATS_SUCCESS,
   CLEAR_FILTERS,
+  CHANGE_PAGE,
 } from "./actions";
 import axios from "axios";
 
@@ -254,10 +255,10 @@ const AppProvider = ({ children }) => {
 
   const getJobs = async () => {
     const { search, searchStatus, searchType, sort } = state;
-    
+
     let url = `/jobs?status=${searchStatus}&jobType=${searchType}&sort=${sort}`;
 
-    if ( search ) {
+    if (search) {
       url = url + `&search=${search}`;
     }
 
@@ -339,6 +340,12 @@ const AppProvider = ({ children }) => {
     clearAlert();
   };
 
+  const changePage = (page) => {
+    dispatch({
+      type: CHANGE_PAGE,
+      payload: { page },
+    });
+  };
   const clearFilters = () => {
     dispatch({
       type: CLEAR_FILTERS,
@@ -364,6 +371,7 @@ const AppProvider = ({ children }) => {
         editJob,
         showStats,
         clearFilters,
+        changePage,
       }}
     >
       {/* render the application and pass down the value object 
