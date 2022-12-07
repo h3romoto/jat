@@ -27,14 +27,14 @@ const PageBtnContainer = () => {
       <div className="btn-container">
         {pages.map((pageNumber) => {
           return (
-            <button
-              type="button"
-              className={pageNumber === page ? "pageBtn active" : "pageBtn"}
-              key={pageNumber}
-              onClick={changePage(pageNumber)}
-            >
-              {pageNumber}
-            </button>
+              <button
+                type='button'
+                className={pageNumber === page ? 'pageBtn active' : 'pageBtn'}
+                key={pageNumber}
+                onClick={() => changePage(pageNumber)}
+              >
+                {pageNumber}
+              </button>
           );
         })}
       </div>
