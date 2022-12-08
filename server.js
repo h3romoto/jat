@@ -6,6 +6,9 @@ import morgan from "morgan";
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import path from 'path'
+import helmet from 'helmet'
+import xss from 'xss-clean'
+import mongoSanitize from 'express-mongo-sanitize'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -22,6 +25,10 @@ import jobsRouter from "./routes/jobRoutes.js";
 app.use(express.json());
 app.use(express.static(path.resolve(__dirname, './client/build')))
 app.get("/api/v1", (req, res) => { res.json({ MSG: "This is the server talking" }); });
+app.use(express.json())
+app.use(helmet())
+app.use(xss())
+app.use(mongoSanitize())
 
 // routes
 app.use("/api/v1/auth", authRouter);
