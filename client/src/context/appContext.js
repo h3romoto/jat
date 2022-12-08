@@ -1,4 +1,4 @@
-import React, { useReducer, useContext, useEffect } from "react";
+import React, { useReducer, useContext } from "react";
 import "axios";
 import reducer from "./reducer";
 import {
@@ -96,7 +96,6 @@ const AppProvider = ({ children }) => {
       return response;
     },
     (error) => {
-      console.log(error.response);
       if (error.response.status === 401) {
         logoutUser();
       }
@@ -137,7 +136,6 @@ const AppProvider = ({ children }) => {
 
     try {
       const response = await axios.post("/api/v1/auth/register", currentUser);
-      // console.log(response);
       // where is "data" coming from?
       const { user, token, location } = response.data;
       dispatch({
@@ -147,7 +145,6 @@ const AppProvider = ({ children }) => {
 
       addUserToLocalStorage({ user, token, location });
     } catch (error) {
-      // console.log(error.response);
       dispatch({
         type: REGISTER_USER_ERROR,
         payload: { msg: error.response.data.msg },
@@ -162,7 +159,6 @@ const AppProvider = ({ children }) => {
 
     try {
       const { data } = await axios.post("/api/v1/auth/login", currentUser);
-      // console.log(response);
       // where is "data" coming from?
       const { user, token, location } = data;
       dispatch({
@@ -275,8 +271,7 @@ const AppProvider = ({ children }) => {
         },
       });
     } catch (error) {
-      console.log(error.response);
-      // logoutUser()
+      logoutUser()
     }
     clearAlert();
   };
@@ -333,7 +328,6 @@ const AppProvider = ({ children }) => {
         },
       });
     } catch (error) {
-      console.log(error.response);
       logoutUser();
     }
 

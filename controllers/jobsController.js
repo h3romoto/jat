@@ -64,7 +64,6 @@ const getAllJobs = async (req, res) => {
   // chain sort conditions
   const jobs = await result;
   const totalJobs = await Job.countDocuments(queryObject)
-  console.log(totalJobs)
   const numOfPages = Math.ceil(totalJobs / limit)
 
   res
@@ -86,9 +85,6 @@ const updateJob = async (req, res) => {
   if (!job) {
     throw new NotFoundError(`No job with id ${jobId}`);
   }
-
-  console.log(typeof req.user.userId);
-  console.log(typeof job.createdBy);
 
   // checkPermissions(req.user, job.createdBy);
 

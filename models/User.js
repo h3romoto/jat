@@ -45,7 +45,6 @@ const UserSchema = new mongoose.Schema({
 
 // middleware
 UserSchema.pre("save", async function () {
-  console.log(this.modifiedPaths())
   // only hash password if req actually changes it
   if (!this.isModified('password')) {
     return
