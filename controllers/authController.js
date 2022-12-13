@@ -1,5 +1,7 @@
 import User from "../models/User.js";
 import { StatusCodes } from "http-status-codes";
+import attachCookies from "../utils/attachCookies.js";
+
 import {
   BadRequestError,
   NotFoundError,
@@ -24,9 +26,9 @@ const register = async (req, res, next) => {
   }
 
   const user = await User.create({ name, email, password });
-
   // create jwt token
   const token = user.createJWT();
+  attachCookies({ res, token });
 
   // EXCLUDE PASSWORD from from returned User Document
   res.status(StatusCodes.CREATED).json({
@@ -61,6 +63,7 @@ const login = async (req, res) => {
 
   const token = user.createJWT();
   user.password = undefined;
+  attachCookies({ res, token });
   res
     .status(StatusCodes.OK)
     .json({ user, token: token, location: user.location });
@@ -84,6 +87,8 @@ const updateUser = async (req, res) => {
 
   // if other properties included, must re-generate token
   const token = user.createJWT();
+  attachCookies({ res, token });
+  
   res.status(StatusCodes.OK).json({
     user,
     token,

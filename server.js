@@ -3,14 +3,15 @@ import dotenv from "dotenv";
 import "express-async-errors";
 import morgan from "morgan";
 
-import { dirname } from 'path'
-import { fileURLToPath } from 'url'
-import path from 'path'
-import helmet from 'helmet'
-import xss from 'xss-clean'
-import mongoSanitize from 'express-mongo-sanitize'
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import path from "path";
+import helmet from "helmet";
+import xss from "xss-clean";
+import mongoSanitize from "express-mongo-sanitize";
+import cookieParser from "cookie-parser";
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 dotenv.config();
@@ -23,28 +24,31 @@ import connectDB from "./db/connectdb.js";
 import authRouter from "./routes/authRoutes.js";
 import jobsRouter from "./routes/jobRoutes.js";
 app.use(express.json());
-app.use(express.static(path.resolve(__dirname, './client/build')))
-app.get("/api/v1", (req, res) => { res.json({ MSG: "This is the server talking" }); });
-app.use(express.json())
-app.use(helmet())
-app.use(xss())
-app.use(mongoSanitize())
+app.use(express.static(path.resolve(__dirname, "./client/build")));
+app.get("/api/v1", (req, res) => {
+  res.json({ MSG: "This is the server talking" });
+});
+app.use(express.json());
+app.use(cookieParser())
+app.use(helmet());
+app.use(xss());
+app.use(mongoSanitize());
 
 // routes
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/jobs", authenticateUser, jobsRouter);
 
-app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, './client/build', 'index.html'))
-})
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "./client/build", "index.html"));
+});
 
 // middleware
 import errorHandlerMiddleware from "./middleware/error-handler.js";
 import notFoundMiddleware from "./middleware/not-found.js";
-import authenticateUser from "./middleware/auth.js"
+import authenticateUser from "./middleware/auth.js";
 
-if (process.env.NODE_ENV !== 'production') {
-  app.use(morgan('dev'));
+if (process.env.NODE_ENV !== "production") {
+  app.use(morgan("dev"));
 }
 // check for incorrect routes
 app.use(notFoundMiddleware);
