@@ -28,6 +28,8 @@ import {
   SHOW_STATS_SUCCESS,
   CLEAR_FILTERS,
   CHANGE_PAGE,
+  GET_CURRENT_USER_BEGIN,
+  GET_CURRENT_USER_SUCCESS,
 } from "./actions";
 
 import { initialState } from "./appContext";
@@ -60,7 +62,6 @@ const reducer = (state, action) => {
     return {
       ...state,
       isLoading: false,
-      token: action.payload.token,
       user: action.payload.user,
       userLocation: action.payload.location,
       jobLocation: action.payload.location,
@@ -90,7 +91,6 @@ const reducer = (state, action) => {
     return {
       ...state,
       isLoading: false,
-      token: action.payload.token,
       user: action.payload.user,
       userLocation: action.payload.location,
       jobLocation: action.payload.location,
@@ -122,9 +122,7 @@ const reducer = (state, action) => {
     return {
       ...initialState,
       user: null,
-      token: null,
-      userLocation: null,
-      jobLocation: null,
+      userLoading: false,
     };
   }
 
@@ -136,7 +134,6 @@ const reducer = (state, action) => {
     return {
       ...state,
       isLoading: false,
-      token: action.payload.token,
       user: action.payload.user,
       userLocation: action.payload.location,
       jobLocation: action.payload.location,
@@ -156,7 +153,7 @@ const reducer = (state, action) => {
   }
 
   if (action.type === HANDLE_CHANGE) {
-    return { ...state, page:1, [action.payload.name]: action.payload.value };
+    return { ...state, page: 1, [action.payload.name]: action.payload.value };
   }
 
   if (action.type === CLEAR_VALUES) {
@@ -253,8 +250,8 @@ const reducer = (state, action) => {
       ...state,
       isLoading: false,
       showAlert: true,
-      alertType: 'success',
-      alertText: 'Job Updated!',
+      alertType: "success",
+      alertText: "Job Updated!",
     };
   }
   if (action.type === EDIT_JOB_ERROR) {
@@ -262,7 +259,7 @@ const reducer = (state, action) => {
       ...state,
       isLoading: false,
       showAlert: true,
-      alertType: 'danger',
+      alertType: "danger",
       alertText: action.payload.msg,
     };
   }
@@ -282,15 +279,31 @@ const reducer = (state, action) => {
   if (action.type === CLEAR_FILTERS) {
     return {
       ...state,
-      search: '',
-      searchStatus: 'all',
-      searchType: 'all',
-      sort: 'latest',
-    }
+      search: "",
+      searchStatus: "all",
+      searchType: "all",
+      sort: "latest",
+    };
   }
 
   if (action.type === CHANGE_PAGE) {
-    return {...state, page: action.payload.page}
+    return { ...state, page: action.payload.page };
+  }
+
+  if (action.type === GET_CURRENT_USER_BEGIN) {
+    return { ...state, userLoading: true, showAlert: false };
+  }
+
+  if (action.type === GET_CURRENT_USER_SUCCESS) {
+    console.log("GET_CURRENT_USER_SUCCESS");
+    return {
+      ...state,
+      userLoading: false,
+      showAlert: false,
+      user: action.payload.user,
+      userLocation: action.payload.location,
+      jobLocation: action.payload.location,
+    };
   }
 
   throw new Error(`No such action : ${action.type}`);

@@ -1,4 +1,4 @@
-import React, { useReducer, useContext } from "react";
+import React, { useReducer, useContext, useEffect } from "react";
 import "axios";
 import reducer from "./reducer";
 import {
@@ -31,24 +31,21 @@ import {
   SHOW_STATS_SUCCESS,
   CLEAR_FILTERS,
   CHANGE_PAGE,
+  GET_CURRENT_USER_BEGIN,
+  GET_CURRENT_USER_SUCCESS,
 } from "./actions";
 import axios from "axios";
 
-// persist state
-const token = localStorage.getItem("token");
-const userLocation = localStorage.getItem("location");
-const user = localStorage.getItem("user");
-
 const initialState = {
+  userLoading: true,
   isLoading: false,
   showAlert: false,
   alertText: "",
   alertType: "",
-  user: user ? JSON.parse(user) : null,
-  token: token,
+  user: null,
   showSidebar: false,
-  userLocation: userLocation || "",
-  jobLocation: userLocation || "",
+  userLocation: "",
+  jobLocation: "",
   isEditing: false,
   editJobId: "",
   position: "",
@@ -80,16 +77,6 @@ const AppProvider = ({ children }) => {
     baseURL: "/api/v1",
   });
 
-  // request interceptor
-  authFetch.interceptors.request.use(
-    (config) => {
-      config.headers["Authorization"] = `Bearer ${state.token}`;
-      return config;
-    },
-    (error) => {
-      return Promise.reject(error);
-    }
-  );
   // response interceptor
   authFetch.interceptors.response.use(
     (response) => {
@@ -118,32 +105,17 @@ const AppProvider = ({ children }) => {
     }, 3000);
   };
 
-  // save state to local storage for auth on reload
-  const addUserToLocalStorage = ({ user, token, location }) => {
-    localStorage.setItem("user", JSON.stringify(user));
-    localStorage.setItem("token", token);
-    localStorage.setItem("location", location);
-  };
-
-  const removeUserFromLocalStorage = ({ user, token, location }) => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    localStorage.removeItem("location");
-  };
-
   const registerUser = async (currentUser) => {
     dispatch({ type: REGISTER_USER_BEGIN });
 
     try {
       const response = await axios.post("/api/v1/auth/register", currentUser);
       // where is "data" coming from?
-      const { user, token, location } = response.data;
+      const { user, location } = response.data;
       dispatch({
         type: REGISTER_USER_SUCCESS,
-        payload: { user, token, location },
+        payload: { user, location },
       });
-
-      addUserToLocalStorage({ user, token, location });
     } catch (error) {
       dispatch({
         type: REGISTER_USER_ERROR,
@@ -160,13 +132,11 @@ const AppProvider = ({ children }) => {
     try {
       const { data } = await axios.post("/api/v1/auth/login", currentUser);
       // where is "data" coming from?
-      const { user, token, location } = data;
+      const { user, location } = data;
       dispatch({
         type: LOGIN_USER_SUCCESS,
-        payload: { user, token, location },
+        payload: { user, location },
       });
-
-      addUserToLocalStorage({ user, token, location });
     } catch (error) {
       dispatch({
         type: LOGIN_USER_ERROR,
@@ -183,7 +153,6 @@ const AppProvider = ({ children }) => {
 
   const logoutUser = () => {
     dispatch({ type: LOGOUT_USER });
-    removeUserFromLocalStorage();
   };
 
   const updateUser = async (currentUser) => {
@@ -196,10 +165,8 @@ const AppProvider = ({ children }) => {
 
       dispatch({
         type: UPDATE_USER_SUCCESS,
-        payload: { user, location, token },
+        payload: { user, location },
       });
-
-      addUserToLocalStorage({ user, location, token: initialState.token });
     } catch (error) {
       if (error.response.status !== 401) {
         dispatch({
@@ -271,7 +238,7 @@ const AppProvider = ({ children }) => {
         },
       });
     } catch (error) {
-      logoutUser()
+      logoutUser();
     }
     clearAlert();
   };
@@ -340,11 +307,31 @@ const AppProvider = ({ children }) => {
       payload: { page },
     });
   };
+
   const clearFilters = () => {
     dispatch({
       type: CLEAR_FILTERS,
     });
   };
+
+  const getCurrentUser = async () => {
+    dispatch({ type: GET_CURRENT_USER_BEGIN });
+    try {
+      const { data } = await authFetch("/auth/getCurrentUser");
+      const { user, location } = data;
+      dispatch({
+        type: GET_CURRENT_USER_SUCCESS,
+        payload: { user, location },
+      });
+    } catch (error) {
+      if (error.response.status === 401) return;
+      logoutUser();
+    }
+  };
+
+  useEffect(() => {
+    getCurrentUser();
+  }, []);
 
   return (
     <AppContext.Provider
